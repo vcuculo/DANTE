@@ -346,7 +346,7 @@
             userId:<?php echo $id ?>,
             video:<?php echo '"'.$vid.'"' ?>,
             others: $("#others").val(),
-            type: 'behavior'  
+            type: <?php echo '"'.$type.'"' ?> + '-behavior'  
         };
 
         $("input[name='behavior']:checkbox").each(

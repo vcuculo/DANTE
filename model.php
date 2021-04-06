@@ -43,13 +43,16 @@
             if ($GLOBALS['save_mode'] == 'db') {
                 global $conn;
 
-                if ($type == 'behavior'){
-                    $stmt = $conn->prepare("SELECT COUNT(id) FROM behavior WHERE UserId= ? AND NameVideo= ?");
-                    $stmt->bind_param("ss", $userId, $video);
+                if (strpos($type, 'behavior') !== false) {
+
+                    $stmt = $conn->prepare("SELECT COUNT(id) FROM behavior WHERE UserId= ? AND NameVideo= ? AND AnnoType= ?");
+
                 } else {
+
                     $stmt = $conn->prepare("SELECT COUNT(id) FROM annotation WHERE UserId= ? AND NameVideo= ? AND AnnoType= ?");
-                    $stmt->bind_param("sss", $userId, $video, $type);
                 }
+
+                $stmt->bind_param("sss", $userId, $video, $type);
 
                 $stmt->execute();
                 $result = $stmt->get_result();
@@ -66,13 +69,18 @@
             if ($GLOBALS['save_mode'] == 'db') {
                 global $conn;
 
-                if ($type == 'behavior'){
-                    $stmt = $conn->prepare("DELETE FROM behavior WHERE UserId= ? AND NameVideo= ?");
-                    $stmt->bind_param("ss", $userId, $video);
+                if (strpos($type, 'behavior') !== false) {
+
+                    $stmt = $conn->prepare("DELETE FROM behavior WHERE UserId= ? AND NameVideo= ? AND AnnoType= ?");
+
                 } else {
+                    
                     $stmt = $conn->prepare("DELETE FROM annotation WHERE UserId= ? AND NameVideo= ? AND AnnoType= ?");
-                    $stmt->bind_param("sss", $userId, $video, $type);
+
                 }
+
+                $stmt->bind_param("sss", $userId, $video, $type);
+
                 $stmt->execute();
             }
         }
@@ -88,7 +96,7 @@
                 
                 global $conn;
 
-                if ($type == 'behavior'){
+                if (strpos($type, 'behavior') !== false){
 
                     $stmt = $conn->prepare("INSERT INTO behavior VALUES (?,?,?,?,?,?,?,?,NULL);");
                     $stmt->bind_param("sssiiiis", $userId, $video, $type, $data->clenchedFist, $data->armsCrossing, $data->legsOpen, $data->handsOnWaist, $data->others);
@@ -120,7 +128,7 @@
                     die("Unable to open file!");
                 }
 
-                if ($type == 'behavior'){
+                if (strpos($type, 'behavior') !== false){
 
                     fwrite($myfile,"UserId;NameVideo;AnnoType;ClenchedFist;ArmsCrossing;LegsOpen;HandsOnWaist;Others\n");
                     fwrite($myfile, $userId.";".$video.";".$type.";".$data->clenchedFist.";".$data->armsCrossing.";".$data->legsOpen.";".$data->handsOnWaist.";".$data->others."\n");

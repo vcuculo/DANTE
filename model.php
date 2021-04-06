@@ -83,21 +83,15 @@
             $video = $data->video;
             $type = $data->type;
 
+
             if ($GLOBALS['save_mode'] == 'db') {
                 
                 global $conn;
 
                 if ($type == 'behavior'){
-            
-                    $clenchedFist = $data->clenchedFist;
-                    $armsCrossing = $data->armsCrossing;
-                    $legsOpen     = $data->legsOpen;
-                    $handsOnWaist = $data->handsOnWaist;
-                    $others       = $data->others;
-
 
                     $stmt = $conn->prepare("INSERT INTO behavior VALUES (?,?,?,?,?,?,?,?,NULL);");
-                    $stmt->bind_param("sssiiiis", $userId, $video, $type, $clenchedFist, $armsCrossing, $legsOpen, $handsOnWaist, $others);
+                    $stmt->bind_param("sssiiiis", $userId, $video, $type, $data->clenchedFist, $data->armsCrossing, $data->legsOpen, $data->handsOnWaist, $data->others);
                     $stmt->execute();
 
                 } else {
@@ -113,30 +107,6 @@
                 mysqli_close($conn);
 
             } else {
-                $behaviorValue = '';
-
-                if ($clenchedFist) {
-                    $behaviorValue =  $behaviorValue . '-' . 'clenched_fist';
-                }
-
-                if ($armsCrossing) {
-                    $behaviorValue = $behaviorValue . '-' . 'arms_crossing';
-                }
-
-                if ($legsOpen) {
-                    $behaviorValue = $behaviorValue .  '-' . 'legs_open';
-                }
-
-                if ($handsOnWaist) {
-                    $behaviorValue = $behaviorValue .  '-' . 'hands_on_waist';
-                }
-
-                if ($others) {
-                    $behaviorValue = $behaviorValue . '-' . $others;
-                }
-
-                print_r($behaviorValue);
-
             	$video = str_replace('.', '_', $video);
 
                 if (!file_exists("annotation/".$userId."/".$video)) {
@@ -150,10 +120,18 @@
                     die("Unable to open file!");
                 }
 
-                fwrite($myfile,"TimeStamp;UserId;NameVideo;AnnoType;Value;BehaviorValue\n");
-                
-                foreach($data->valvid as $row){
-                    fwrite($myfile, $row->timeStamp.";".$userId.";".$video.";".$type.";".$row->value.";".$behaviorValue."\n");
+                if ($type == 'behavior'){
+
+                    fwrite($myfile,"UserId;NameVideo;AnnoType;ClenchedFist;ArmsCrossing;LegsOpen;HandsOnWaist;Others\n");
+                    fwrite($myfile, $userId.";".$video.";".$type.";".$data->clenchedFist.";".$data->armsCrossing.";".$data->legsOpen.";".$data->handsOnWaist.";".$data->others."\n");
+
+                } else {
+
+                    fwrite($myfile,"TimeStamp;UserId;NameVideo;AnnoType;Value\n");
+                    
+                    foreach($data->valvid as $row){
+                        fwrite($myfile, $row->timeStamp.";".$userId.";".$video.";".$type.";".$row->value."\n");
+                    }
                 }
             }
         }

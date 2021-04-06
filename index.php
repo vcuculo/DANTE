@@ -352,7 +352,7 @@
         $("input[name='behavior']:checkbox").each(
             function(){
                 var id = this.id;
-                arrCB[id] = (this.checked ? true : false)
+                arrCB[id] = (this.checked ? 1 : 0)
             }
         );
 
